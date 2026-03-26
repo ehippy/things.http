@@ -32,7 +32,13 @@ def verify(credentials: HTTPBasicCredentials = Depends(security)):
 
 
 def _open(url: str):
-    subprocess.run(["open", url], check=True)
+    try:
+        subprocess.run(["open", url], check=True)
+    except subprocess.CalledProcessError:
+        raise HTTPException(
+            status_code=503,
+            detail="Write unavailable: Things.app requires an active GUI session",
+        )
 
 
 # --- Read endpoints ---

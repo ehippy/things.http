@@ -21,6 +21,34 @@ THINGS_HOST=127.0.0.1    # default: "127.0.0.1"
 THINGS_PORT=8000         # default: 8000
 ```
 
+## Running as a system service (LaunchDaemon)
+
+`com.things.http.plist` is a LaunchDaemon template. It runs as your user so the Things SQLite DB is accessible immediately after boot, before login. Writes auto-launch Things.app once you're logged in; they return 503 pre-login when no GUI session exists.
+
+**Setup:**
+1. Edit `com.things.http.plist` — set `THINGS_PASSWORD` to your actual password
+2. Install:
+```bash
+sudo cp com.things.http.plist /Library/LaunchDaemons/
+sudo launchctl load /Library/LaunchDaemons/com.things.http.plist
+```
+
+```bash
+# Check status (look for PID in first column)
+sudo launchctl list | grep things.http
+
+# Reload after editing the plist
+sudo launchctl unload /Library/LaunchDaemons/com.things.http.plist
+sudo launchctl load /Library/LaunchDaemons/com.things.http.plist
+
+# Uninstall
+sudo launchctl unload /Library/LaunchDaemons/com.things.http.plist
+sudo rm /Library/LaunchDaemons/com.things.http.plist
+
+# Logs
+tail -f ~/Library/Logs/things.http.log
+```
+
 ## Architecture
 
 Everything lives in `main.py` — a single-file FastAPI app:
