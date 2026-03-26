@@ -94,10 +94,14 @@ curl -u things:secret -X POST http://localhost:8000/tasks/SOME-UUID/complete
 
 ## Running as a system service
 
-`com.things.http.plist` is a LaunchDaemon that starts things.http automatically after every boot — reads work immediately, writes work once you're logged in.
+`com.things.http.plist.template` is a LaunchDaemon template that starts things.http automatically after every boot — reads work immediately, writes work once you're logged in.
 
-1. Edit `com.things.http.plist` and set your password in `THINGS_PASSWORD`
-2. Install:
+1. Copy the template and fill in your details:
+```bash
+cp com.things.http.plist.template com.things.http.plist
+```
+2. Edit `com.things.http.plist` — set `THINGS_PASSWORD`, `UserName`, and the paths to match your username
+3. Install:
 
 ```bash
 sudo cp com.things.http.plist /Library/LaunchDaemons/
