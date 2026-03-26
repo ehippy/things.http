@@ -17,7 +17,11 @@ PORT = int(os.environ.get("THINGS_PORT", "8000"))
 if not PASSWORD:
     raise RuntimeError("THINGS_PASSWORD environment variable is required")
 
-app = FastAPI(title="things.http")
+app = FastAPI(
+    title="things.http",
+    description="HTTP wrapper for [Things 3](https://culturedcode.com/things/). Source: [ehippy/things.http](https://github.com/ehippy/things.http)",
+    license_info={"name": "MIT", "url": "https://github.com/ehippy/things.http/blob/main/LICENSE"},
+)
 security = HTTPBasic()
 
 
