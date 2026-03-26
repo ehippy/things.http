@@ -16,6 +16,14 @@ A lightweight HTTP wrapper around [Things 3](https://culturedcode.com/things/) f
 - macOS with [Things 3](https://culturedcode.com/things/) installed
 - [uv](https://docs.astral.sh/uv/) for dependency management
 
+## First-time Things setup
+
+Two one-time prompts from macOS/Things are required before everything works:
+
+1. **Full Disk Access for Python** — macOS will prompt when the server first reads the Things database. To avoid this blocking headless runs, grant it permanently: System Settings → Privacy & Security → Full Disk Access → add `.venv/bin/python` from the project directory.
+
+2. **Enable Things URLs** — Things will prompt the first time a write endpoint is called. Accept it, or enable it manually in Things → Settings → General → "Enable Things URLs". Without this, write calls will fail silently.
+
 ## Setup
 
 ```bash
