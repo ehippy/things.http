@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.things.http</string>
+
+    <!-- Run as your user so the Things DB is accessible after boot, before login -->
+    <key>UserName</key>
+    <string>pmcdavid</string>
+
+    <!-- Use the venv Python directly — no dependency on uv being in PATH -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/pmcdavid/Projects/things.http/.venv/bin/python</string>
+        <string>main.py</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/pmcdavid/Projects/things.http</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <!-- Set your password here before installing -->
+        <key>THINGS_PASSWORD</key>
+        <string>changeme</string>
+        <!-- Ensures ~ expands correctly for things.py DB auto-detection -->
+        <key>HOME</key>
+        <string>/Users/pmcdavid</string>
+        <key>THINGS_HOST</key>
+        <string>0.0.0.0</string>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- Restart automatically if the process crashes -->
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/pmcdavid/Library/Logs/things.http.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/pmcdavid/Library/Logs/things.http.log</string>
+</dict>
+</plist>

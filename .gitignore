@@ -8,3 +8,6 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Contains secrets — install manually, never commit
+com.things.http.plist
