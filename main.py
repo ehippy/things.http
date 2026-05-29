@@ -92,6 +92,32 @@ def tags(auth=Depends(verify)):
     return things.tags()
 
 
+@app.get("/search")
+def search(q: str = "", auth=Depends(verify)):
+    """Search tasks across all collections by title and notes."""
+    if not q:
+        return []
+    return things.search(q)
+
+
+@app.get("/deadlines")
+def deadlines(auth=Depends(verify)):
+    """Get all tasks with deadlines."""
+    return things.deadlines()
+
+
+@app.get("/trash")
+def trash(auth=Depends(verify)):
+    """Get trashed/deleted items."""
+    return things.trash()
+
+
+@app.get("/canceled")
+def canceled(auth=Depends(verify)):
+    """Get canceled tasks."""
+    return things.canceled()
+
+
 @app.get("/tasks/{uuid}")
 def get_task(uuid: str, auth=Depends(verify)):
     item = things.get(uuid)
