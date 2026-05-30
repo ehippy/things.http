@@ -229,5 +229,19 @@ def update_project(uuid: str, body: ProjectUpdate, auth=Depends(verify)):
     return {"status": "accepted"}
 
 
+@app.post("/projects/{uuid}/complete", status_code=202)
+def complete_project(uuid: str, auth=Depends(verify)):
+    """Mark a project as completed."""
+    things.complete(uuid)
+    return {"status": "accepted"}
+
+
+@app.post("/projects/{uuid}/cancel", status_code=202)
+def cancel_project(uuid: str, auth=Depends(verify)):
+    """Cancel a project."""
+    _open(things.url(uuid=uuid, command="update-project", canceled="true"))
+    return {"status": "accepted"}
+
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host=HOST, port=PORT, reload=False)

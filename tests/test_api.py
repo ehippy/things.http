@@ -228,3 +228,38 @@ def test_update_task(mock_open, mock_url):
         json={"title": "new title"},
     )
     assert resp.status_code == 202
+
+
+# --- Project write endpoint tests ---
+
+
+@patch("main.things.complete")
+def test_complete_project(mock_complete):
+    resp = client.post("/projects/p1/complete", headers=_auth())
+    assert resp.status_code == 202
+    assert resp.json() == {"status": "accepted"}
+    mock_complete.assert_called_once_with("p1")
+
+
+@patch("main.things.url")
+@patch("main._open")
+def test_cancel_project(mock_open, mock_url):
+    mock_url.return_value = "things:///update-project?uuid=p1&canceled=true"
+    resp = client.post("/projects/p1/cancel", headers=_auth())
+    assert resp.status_code == 202
+    assert resp.json() == {"status": "accepted"}
+    mock_url.assert_called_once_with(uuid="p1", command="update-project", canceled="true")
+
+
+@patch("main.things.url")
+@patch("main._open")
+def test_complete_project_requires_auth(mock_open, mock_url):
+    resp = client.post("/projects/p1/complete")
+    assert resp.status_code == 401
+
+
+@patch("main.things.url")
+@patch("main._open")
+def test_cancel_project_requires_auth(mock_open, mock_url):
+    resp = client.post("/projects/p1/cancel")
+    assert resp.status_code == 401

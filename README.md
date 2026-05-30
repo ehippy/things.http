@@ -8,7 +8,7 @@ A lightweight HTTP wrapper around [Things 3](https://culturedcode.com/things/) f
 - Search tasks by title and notes across all collections
 - View deadlines, trashed, and canceled tasks
 - Create and update tasks and projects
-- Complete or cancel tasks
+- Complete or cancel tasks and projects
 - HTTP Basic Auth on every endpoint
 - Runs as a system service (available after boot, before login)
 - Auto-docs at `/docs`
@@ -86,6 +86,8 @@ Writes go through the Things [URL scheme](https://culturedcode.com/things/suppor
 | POST | `/tasks/{uuid}/cancel` | Cancel a task |
 | POST | `/projects` | Create a project |
 | PATCH | `/projects/{uuid}` | Update a project |
+| POST | `/projects/{uuid}/complete` | Complete a project |
+| POST | `/projects/{uuid}/cancel` | Cancel a project |
 
 **Task fields:** `title`, `notes`, `when` (today/tomorrow/evening/someday/date), `deadline`, `tags`, `list_id`, `area_id`, `checklist_items`
 
@@ -110,6 +112,9 @@ curl -u things:secret "http://localhost:8000/search?q=meeting"
 
 # Get deadlines
 curl -u things:secret http://localhost:8000/deadlines
+
+# Complete a project
+curl -u things:secret -X POST http://localhost:8000/projects/SOME-UUID/complete
 ```
 
 ## Running as a system service
