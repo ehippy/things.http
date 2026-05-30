@@ -92,6 +92,32 @@ def tags(auth=Depends(verify)):
     return things.tags()
 
 
+@app.get("/search")
+def search(q: str = "", auth=Depends(verify)):
+    """Search tasks across all collections by title and notes."""
+    if not q:
+        return []
+    return things.search(q)
+
+
+@app.get("/deadlines")
+def deadlines(auth=Depends(verify)):
+    """Get all tasks with deadlines."""
+    return things.deadlines()
+
+
+@app.get("/trash")
+def trash(auth=Depends(verify)):
+    """Get trashed/deleted items."""
+    return things.trash()
+
+
+@app.get("/canceled")
+def canceled(auth=Depends(verify)):
+    """Get canceled tasks."""
+    return things.canceled()
+
+
 @app.get("/tasks/{uuid}")
 def get_task(uuid: str, auth=Depends(verify)):
     item = things.get(uuid)
@@ -200,6 +226,20 @@ def update_project(uuid: str, body: ProjectUpdate, auth=Depends(verify)):
     if "tags" in params:
         params["tags"] = ",".join(params["tags"])
     _open(things.url(uuid=uuid, command="update-project", **params))
+    return {"status": "accepted"}
+
+
+@app.post("/projects/{uuid}/complete", status_code=202)
+def complete_project(uuid: str, auth=Depends(verify)):
+    """Mark a project as completed."""
+    things.complete(uuid)
+    return {"status": "accepted"}
+
+
+@app.post("/projects/{uuid}/cancel", status_code=202)
+def cancel_project(uuid: str, auth=Depends(verify)):
+    """Cancel a project."""
+    _open(things.url(uuid=uuid, command="update-project", canceled="true"))
     return {"status": "accepted"}
 
 

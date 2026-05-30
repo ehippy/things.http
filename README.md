@@ -5,8 +5,10 @@ A lightweight HTTP wrapper around [Things 3](https://culturedcode.com/things/) f
 ## Features
 
 - Read all Things collections: inbox, today, upcoming, anytime, someday, logbook, projects, areas, tags
+- Search tasks by title and notes across all collections
+- View deadlines, trashed, and canceled tasks
 - Create and update tasks and projects
-- Complete or cancel tasks
+- Complete or cancel tasks and projects
 - HTTP Basic Auth on every endpoint
 - Runs as a system service (available after boot, before login)
 - Auto-docs at `/docs`
@@ -66,6 +68,10 @@ All endpoints require Basic Auth (`Authorization: Basic ...`).
 | GET | `/projects` | All projects |
 | GET | `/areas` | All areas |
 | GET | `/tags` | All tags |
+| GET | `/search?q=` | Search tasks by title/notes |
+| GET | `/deadlines` | Tasks with deadlines |
+| GET | `/trash` | Trashed/deleted items |
+| GET | `/canceled` | Canceled tasks |
 | GET | `/tasks/{uuid}` | Single task by UUID |
 
 ### Write
@@ -80,6 +86,8 @@ Writes go through the Things [URL scheme](https://culturedcode.com/things/suppor
 | POST | `/tasks/{uuid}/cancel` | Cancel a task |
 | POST | `/projects` | Create a project |
 | PATCH | `/projects/{uuid}` | Update a project |
+| POST | `/projects/{uuid}/complete` | Complete a project |
+| POST | `/projects/{uuid}/cancel` | Cancel a project |
 
 **Task fields:** `title`, `notes`, `when` (today/tomorrow/evening/someday/date), `deadline`, `tags`, `list_id`, `area_id`, `checklist_items`
 
@@ -98,6 +106,15 @@ curl -u things:secret -X POST http://localhost:8000/tasks \
 
 # Complete a task
 curl -u things:secret -X POST http://localhost:8000/tasks/SOME-UUID/complete
+
+# Search tasks
+curl -u things:secret "http://localhost:8000/search?q=meeting"
+
+# Get deadlines
+curl -u things:secret http://localhost:8000/deadlines
+
+# Complete a project
+curl -u things:secret -X POST http://localhost:8000/projects/SOME-UUID/complete
 ```
 
 ## Running as a system service
