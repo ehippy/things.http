@@ -9,3 +9,9 @@ dependencies = [
     "fastapi",
     "uvicorn",
 ]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "httpx",
+]
