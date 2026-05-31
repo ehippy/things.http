@@ -140,6 +140,12 @@ class ProjectUpdate(BaseModel):
     area_id: Optional[str] = None
 
 
+class TaskMove(BaseModel):
+    """Move a task to a different collection (inbox, today, upcoming, someday, anytime, or a project)."""
+    collection: str
+    """Target collection: one of 'inbox', 'today', 'upcoming', 'someday', 'anytime', or a project ID."""
+
+
 # --- Write endpoints ---
 
 @app.post("/tasks", status_code=202)
@@ -178,6 +184,13 @@ def complete_task(uuid: str, auth=Depends(verify)):
 @app.post("/tasks/{uuid}/cancel", status_code=202)
 def cancel_task(uuid: str, auth=Depends(verify)):
     _open(things.url(uuid=uuid, command="update", canceled="true"))
+    return {"status": "accepted"}
+
+
+@app.post("/tasks/{uuid}/move", status_code=202)
+def move_task(uuid: str, body: TaskMove, auth=Depends(verify)):
+    """Move a task to a different collection (inbox, today, upcoming, someday, anytime, or a project)."""
+    _open(things.url(uuid=uuid, command="move-to-collection", collection=body.collection))
     return {"status": "accepted"}
 
 

@@ -7,6 +7,7 @@ A lightweight HTTP wrapper around [Things 3](https://culturedcode.com/things/) f
 - Read all Things collections: inbox, today, upcoming, anytime, someday, logbook, projects, areas, tags
 - Create and update tasks and projects
 - Complete or cancel tasks
+- Move tasks between collections (inbox, today, upcoming, someday, anytime, projects)
 - HTTP Basic Auth on every endpoint
 - Runs as a system service (available after boot, before login)
 - Auto-docs at `/docs`
@@ -76,10 +77,11 @@ Writes go through the Things [URL scheme](https://culturedcode.com/things/suppor
 |---|---|---|
 | POST | `/tasks` | Create a task |
 | PATCH | `/tasks/{uuid}` | Update a task |
-| POST | `/tasks/{uuid}/complete` | Complete a task |
-| POST | `/tasks/{uuid}/cancel` | Cancel a task |
-| POST | `/projects` | Create a project |
-| PATCH | `/projects/{uuid}` | Update a project |
+|| POST | `/tasks/{uuid}/complete` | Complete a task |
+|| POST | `/tasks/{uuid}/cancel` | Cancel a task |
+|| POST | `/tasks/{uuid}/move` | Move task to collection |
+|| POST | `/projects` | Create a project |
+|| PATCH | `/projects/{uuid}` | Update a project |
 
 **Task fields:** `title`, `notes`, `when` (today/tomorrow/evening/someday/date), `deadline`, `tags`, `list_id`, `area_id`, `checklist_items`
 
@@ -98,6 +100,11 @@ curl -u things:secret -X POST http://localhost:8000/tasks \
 
 # Complete a task
 curl -u things:secret -X POST http://localhost:8000/tasks/SOME-UUID/complete
+
+# Move a task to today
+curl -u things:secret -X POST http://localhost:8000/tasks/SOME-UUID/move \
+  -H 'Content-Type: application/json' \
+  -d '{"collection": "today"}'
 ```
 
 ## Running as a system service
