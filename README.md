@@ -5,6 +5,7 @@ A lightweight HTTP wrapper around [Things 3](https://culturedcode.com/things/) f
 ## Features
 
 - Read all Things collections: inbox, today, upcoming, anytime, someday, logbook, projects, areas, tags
+- Read to-do items only (excluding projects and headings): `/todos`
 - Create and update tasks and projects
 - Complete or cancel tasks
 - HTTP Basic Auth on every endpoint
@@ -66,6 +67,7 @@ All endpoints require Basic Auth (`Authorization: Basic ...`).
 | GET | `/projects` | All projects |
 | GET | `/areas` | All areas |
 | GET | `/tags` | All tags |
+| GET | `/todos` | All to-do items (excluding projects/headings) |
 | GET | `/tasks/{uuid}` | Single task by UUID |
 
 ### Write

@@ -92,6 +92,11 @@ def tags(auth=Depends(verify)):
     return things.tags()
 
 
+@app.get("/todos")
+def todos(auth=Depends(verify)):
+    return things.todos()
+
+
 @app.get("/tasks/{uuid}")
 def get_task(uuid: str, auth=Depends(verify)):
     item = things.get(uuid)
