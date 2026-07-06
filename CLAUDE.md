@@ -55,6 +55,8 @@ Everything lives in `main.py` — a single-file FastAPI app:
 
 - **Auth:** HTTP Basic Auth via `fastapi.security.HTTPBasic` + `secrets.compare_digest`. All endpoints share the `verify` dependency.
 - **Reads:** Thin wrappers over `things.*` functions (e.g. `things.today()`, `things.get(uuid)`).
+- **Search:** `GET /search?q=keyword` uses `things.search()` which runs SQL LIKE on task titles and notes across all collections. Supports optional `limit` parameter (default 50, max 200).
+- **Health:** `GET /health` calls `things.today()` to verify the Things database is accessible. Returns 200 if OK, 503 if not.
 - **Writes:** Fire-and-forget via the Things URL scheme. `things.url()` builds the URL; `_open()` calls `subprocess.run(['open', url])`. Returns `202 Accepted`. Things has no delete command — use complete or cancel instead.
 - **Auto-docs:** FastAPI serves OpenAPI docs at `/docs` (Basic Auth prompted in browser).
 
