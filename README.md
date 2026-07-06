@@ -67,6 +67,8 @@ All endpoints require Basic Auth (`Authorization: Basic ...`).
 | GET | `/areas` | All areas |
 | GET | `/tags` | All tags |
 | GET | `/tasks/{uuid}` | Single task by UUID |
+| GET | `/search?q=keyword` | Search tasks by title and notes |
+| GET | `/health` | Health check (verifies Things DB is accessible) |
 
 ### Write
 
@@ -98,6 +100,15 @@ curl -u things:secret -X POST http://localhost:8000/tasks \
 
 # Complete a task
 curl -u things:secret -X POST http://localhost:8000/tasks/SOME-UUID/complete
+
+# Search for tasks containing "groceries"
+curl -u things:secret "http://localhost:8000/search?q=groceries"
+
+# Limit search results
+curl -u things:secret "http://localhost:8000/search?q=groceries&limit=10"
+
+# Health check
+curl -u things:secret http://localhost:8000/health
 ```
 
 ## Running as a system service

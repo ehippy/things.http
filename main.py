@@ -100,6 +100,27 @@ def get_task(uuid: str, auth=Depends(verify)):
     return item
 
 
+# --- Search ---
+
+@app.get("/search")
+def search(
+    q: str = "",
+    limit: int = 50,
+    auth=Depends(verify),
+):
+    """Search tasks across all collections by title and notes.
+
+    Query parameters:
+        q: Search keyword (required). Searches task titles and notes.
+        limit: Maximum number of results to return (default: 50, max: 200).
+    """
+    if not q.strip():
+        raise HTTPException(status_code=400, detail="Query parameter 'q' is required")
+
+    results = things.search(q.strip())
+    return results[:limit]
+
+
 # --- Write models ---
 
 class TaskCreate(BaseModel):
@@ -201,6 +222,21 @@ def update_project(uuid: str, body: ProjectUpdate, auth=Depends(verify)):
         params["tags"] = ",".join(params["tags"])
     _open(things.url(uuid=uuid, command="update-project", **params))
     return {"status": "accepted"}
+
+
+# --- Health check ---
+
+@app.get("/health")
+def health(auth=Depends(verify)):
+    """Health check endpoint. Verifies the Things 3 database is accessible."""
+    try:
+        things.today()
+        return {"status": "ok", "things_db": "accessible"}
+    except Exception as e:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Things 3 database unavailable: {str(e)}",
+        )
 
 
 if __name__ == "__main__":
