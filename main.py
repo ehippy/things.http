@@ -1,7 +1,11 @@
+import getpass
 import os
 import secrets
 import subprocess
+import time
 from typing import Optional
+
+_START_TIME = time.time()
 
 import things
 import uvicorn
@@ -43,6 +47,50 @@ def _open(url: str):
             status_code=503,
             detail="Write unavailable: Things.app requires an active GUI session",
         )
+
+
+# --- Health ---
+
+@app.get("/health")
+def health(auth=Depends(verify)):
+    """Self-status without side effects: read path, write path, freshness."""
+    report = {"status": "ok", "server_uptime_s": int(time.time() - _START_TIME)}
+
+    # Read path: the SQLite DB (synced by Things' own CloudKit sync)
+    db: dict = {"readable": False}
+    try:
+        database = things.Database()
+        db["path"] = database.filepath
+        db["version"] = database.get_version()
+        db["mtime_age_min"] = round((time.time() - os.stat(database.filepath).st_mtime) / 60, 1)
+        db["readable"] = True
+    except Exception as exc:  # never let a health probe 500
+        db["error"] = str(exc)
+    report["database"] = db
+
+    # Write path: things:// URLs only land in the active console session's Things.app
+    gui: dict = {}
+    owner = os.path.basename(os.environ.get("HOME", "")) or getpass.getuser()
+    try:
+        console_user = subprocess.run(
+            ["stat", "-f", "%Su", "/dev/console"], capture_output=True, text=True, timeout=5
+        ).stdout.strip() or None
+    except Exception:
+        console_user = None
+    try:
+        gui["things_running"] = subprocess.run(
+            ["pgrep", "-x", "Things3"], capture_output=True, timeout=5
+        ).returncode == 0
+    except Exception:
+        gui["things_running"] = False
+    gui["console_user"] = console_user
+    gui["account"] = owner
+    gui["writes_ready"] = bool(console_user == owner and gui["things_running"])
+    report["gui"] = gui
+
+    if not (db["readable"] and gui["writes_ready"]):
+        report["status"] = "degraded"
+    return report
 
 
 # --- Read endpoints ---
